@@ -17,6 +17,7 @@ class APIAction extends AbstractAjaxAction {
 	 * object to work with
 	 * @var object
 	 */
+	public $object = null;
 
 	/**
 	 * @see \wcf\action\AbstractAction::execute()
