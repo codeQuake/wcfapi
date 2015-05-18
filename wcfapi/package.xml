@@ -20,6 +20,10 @@
 	<instructions type="install">
 		<!-- files -->
 		<instruction type="file">files.tar</instruction>
+		<instruction type="file" application="wcf">files_wcf.tar</instruction>
+		
+		<!--xml-->
+		<instruction type="eventListener">xml/eventlistener.xml</instruction>
 	</instructions>
 
 </package>

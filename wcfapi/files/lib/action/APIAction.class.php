@@ -1,6 +1,7 @@
 <?php
 namespace api\action;
 use wcf\action\AbstractAjaxAction;
+use wcf\system\request\RouteHandler;
 
 /**
  * @author  Jens Krumsieck
