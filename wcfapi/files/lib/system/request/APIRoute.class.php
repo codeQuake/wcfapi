@@ -14,32 +14,32 @@ use wcf\system\request\IRoute;
  */
 class APIRoute implements IRoute {
 
-    /**
-     * parsed request data
-     * @var array<mixed>
-     */
-    protected $routeData = array(
-        'controller' => 'api',
-        'isDefaultController' => false
-    );
-    
-    /**
-     * @see \wcf\system\request\IRoute::buildLink()
-     */
-    public function buildLink(array $components) {
-        $link = 'v1/';
-        
-        $request = (isset($components['request'])) ? $components['request'] : '';
-        
-        if (!empty($request)) $link .= $request.'/';
-        
-        // unset special components to prevent appending later
+	/**
+	 * parsed request data
+	 * @var array<mixed>
+	 */
+	protected $routeData = array(
+		'controller' => 'api',
+		'isDefaultController' => false
+	);
+	
+	/**
+	 * @see \wcf\system\request\IRoute::buildLink()
+	 */
+	public function buildLink(array $components) {
+		$link = 'v1/';
+		
+		$request = (isset($components['request'])) ? $components['request'] : '';
+		
+		if (!empty($request)) $link .= $request.'/';
+		
+		// unset special components to prevent appending later
 		foreach (array('request', 'application', 'controller', 'id') as $componentName) {
 			if (isset($components[$componentName])) {
 				unset($components[$componentName]);
 			}
 			}
-        
+		
 			// prepend index.php
 		if (!URL_OMIT_INDEX_PHP) {
 			if (URL_LEGACY_MODE) {
@@ -48,15 +48,15 @@ class APIRoute implements IRoute {
 				$link = 'index.php?' . $link;
 			}
 		}
-        
+		
 			if (!empty($components)) {
 			if (strpos($link, '?') === false) $link .= '?';
 			else $link .= '&';
 			$link .= http_build_query($components, '', '&');
 		}
-        
+		
 		return $link;
-    }
+	}
 	
 	/**
 	 * Returns true, if build request points to `\api\action\APIAction`

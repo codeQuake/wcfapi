@@ -19,6 +19,6 @@ class APIAction extends AbstractAjaxAction {
 		
         $routeData = RouteHandler::getInstance()->getRouteData();
 		#DEBUG
-        print_r($routeData);
+		print_r($routeData);
     }
 }
