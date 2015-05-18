@@ -14,6 +14,11 @@ use wcf\system\request\RouteHandler;
 class APIAction extends AbstractAjaxAction {
 	
 	/**
+	 * object to work with
+	 * @var object
+	 */
+
+	/**
 	 * @see \wcf\action\AbstractAction::execute()
 	 */
 	public function execute() {
@@ -27,13 +32,14 @@ class APIAction extends AbstractAjaxAction {
 		 *		[request] => request string 
 		 *	)
 		 * example: (user comments)
-		 * URL api/v1/user/2/comment/1447/ => Array ( [controller] => api [request] => user/2/comment/1447 )
+		 * URL api/v1/category/54/news/ => Array ( [controller] => api [request] => category/54/news )
 		 */
 		$routeData = RouteHandler::getInstance()->getRouteData();
+		if (!isset($routeData['request'])) throw new AJAXException('no valid request found');
 		$request = $routeData['request'];
 		
 		//split request in parts
-		$splittedRequest = explode('/', $request);
+		$splittedRequest = explode('/', $request);		
 		$i = 0;
 		$request = array();
 		foreach ($splittedRequest as $part) {
@@ -49,6 +55,10 @@ class APIAction extends AbstractAjaxAction {
 			$i++;
 		}
 		
+		//we support only two chaining objects like category/XX/news
+		$count = count($request);
+		if ($count > 2) throw new AJAXException('request overflow');
+		
 		/**
 		 * get request method
 		 * available methods: GET, PUT, POST, DELETE
@@ -62,35 +72,37 @@ class APIAction extends AbstractAjaxAction {
 		//only get request needs the database object, the others the dbo-action class...
 		$classSuffix = '';
 		if ($method != 'GET') $classSuffix = 'Action';
+		//GET data & last object does not have an id given => list all items
+		if ($method == 'GET' && !isset($request[$count - 1]['objectID'])) $classSuffix = 'List';
 		
-		$count = count($request);
-		$i = 0;
-		foreach ($request as $part) {
-			$request[$i]['className'] = $classPrefix.$part['object'].'\\'.ucfirst($part['object']);
-			//only the last object needs the action suffix (like editing a comment on an element)
-			if ($i == $count) $request[$i]['className'] .= $classSuffix;
-			
-			//deactivated for debugging
-			//if (!class_exists($request[$i]['className'])) throw new AJAXException("unable to find class '".$request[$i]['className']."'");
-			$i++;
-		}
+		$className = $classPrefix;
 		
-		var_dump($request);
-		/**
-		 * results:
-		 * array(2) { 
-		 *	[0]=> array(3) { 
-		 *		["object"]=> string(4) "user" 
-		 *		["objectID"]=> int(1) 
-		 *		["className"]=> string(18) "api\data\user\User" } 
-		 *	[1]=> array(3) { 
-		 *		["object"]=> string(7) "comment" 
-		 *		["objectID"]=> int(2) 
-		 *		["className"]=> string(24) "api\data\comment\Comment" } 
-		 *	}
-		 *
-		 * any suggestions??
-		 */
+		//dbo is found in last given objects folder
+		$className .= $request[$count-1]['object'];
+		$className .= '\\'.ucfirst($request[0]['object']);
+		if ($count > 1) $className .= ucfirst($request[$count-1]['object']);
+		$className .= $classSuffix;
 		
+		//get object id, taken from the first request object
+		$objectID = 0;
+		if (isset($request[0]['objectID'])) $objectID = $request[0]['objectID'];
+		
+		if ($count > 1 && $objectID == 0) throw new AJAXException('no object specified');
+		
+		//call class if exists
+		if (!class_exists($className)) throw new AJAXException("unable to find class '".$className."'");
+		$this->object = new $className($objectID);
+		
+		if (!($this->object instanceof IRESTfulObject)) throw new AJAXException("given object does not implement api\\data\\IRESTfulObject");
+		
+		//print the JSON bullshit
+		$this->executed();
+	}
+	
+	/**
+	 * @see wcf\action\AbstractAction::executed()
+	 */
+	public function executed() {
+		$this->sendJsonResponse($this->object->getAPIData());
 	}
 }
