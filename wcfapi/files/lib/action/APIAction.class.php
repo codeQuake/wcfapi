@@ -10,15 +10,15 @@ use wcf\action\AbstractAjaxAction;
  */
 
 class APIAction extends AbstractAjaxAction {
-    
+	
 	/**
 	 * @see \wcf\action\AbstractAction::execute()
 	 */
-    public function execute() {
-        parent::execute();
+	public function execute() {
+		parent::execute();
 		
-        $routeData = RouteHandler::getInstance()->getRouteData();
+		$routeData = RouteHandler::getInstance()->getRouteData();
 		#DEBUG
 		print_r($routeData);
-    }
+	}
 }
