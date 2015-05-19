@@ -1,5 +1,6 @@
 <?php
 namespace api\action;
+use api\data\IRESTfulObject;
 use wcf\action\AbstractAjaxAction;
 use wcf\system\exception\AJAXException;
 use wcf\system\request\RouteHandler;
@@ -55,7 +56,7 @@ class APIAction extends AbstractAjaxAction {
 				$i--;
 				
 				$id = intval($part);
-				if (strpos($part,';')) {
+				if (strpos($part, ';')) {
 					//array given
 					$id = array_filter(explode(';', $part));
 				}
