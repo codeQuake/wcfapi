@@ -128,13 +128,9 @@ class APIAction extends AbstractAjaxAction {
 					//delete
 					$this->object = new $className(array($objectID), 'delete');
 					break;
-				default:
-					throw new AJAXException("one does not simply walk into mordor!");
-					break;
 			}
 			$this->object->executeAction();
-		} 
-		//print the JSON bullshit
+		}
 		$this->executed();
 	}
 	
@@ -142,8 +138,7 @@ class APIAction extends AbstractAjaxAction {
 	 * @see wcf\action\AbstractAction::executed()
 	 */
 	public function executed() {
-		 if ($this->method == 'GET') $this->sendJsonResponse($this->object->getAPIData());
-		 
+		 if ($this->method == 'GET') $this->sendJsonResponse($this->object->getAPIData());		 
 		 else $this->sendJsonResponse(array('success'));
 	}
 }
