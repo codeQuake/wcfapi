@@ -107,7 +107,7 @@ class APIRoute implements IRoute {
 		}
 		
 		// validate request
-		if (preg_match('~^[a-z0-9]+(?:\-{1}[a-z0-9]+)*(?:\/[a-z0-9]+(?:\-{1}[a-z0-9]+)*)*$~', $request)) {
+		if (preg_match('~^^[a-z0-9]+(?:\-{1}[a-z0-9]+)*(?:\/[a-z0-9;]+(?:\-{1}[a-z0-9]+)*)*$~', $request)) {
 			$this->routeData['request'] = $request;
 			return true;
 		}

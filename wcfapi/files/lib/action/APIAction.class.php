@@ -55,9 +55,9 @@ class APIAction extends AbstractAjaxAction {
 				$i--;
 				
 				$id = intval($part);
-				if (strpos($part,'-')) {
+				if (strpos($part,';')) {
 					//array given
-					$id = explode('-', $part);
+					$id = array_filter(explode(';', $part));
 				}
 				
 				$request[$i]['objectID'] = $id;
